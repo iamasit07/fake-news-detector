@@ -1,15 +1,12 @@
-import { Button } from './components/ui/button.jsx';
+import {FakeNewsChecker} from '@/components/custom/fakeNewsChecker.jsx';
+
 
 function App() {
 
   return (
-    <>
-        <div className='p-20'>
-            <Button>Button</Button>
-        </div>
-        
-    </>
-    
+    <main className="min-h-screen bg-[#212121] text-white  pt-20 px-4">
+      <FakeNewsChecker />
+    </main>
     
   )
 }
