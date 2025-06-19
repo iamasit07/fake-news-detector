@@ -1,5 +1,9 @@
 import { Input } from "@/components/ui/input.jsx"
 import { Button } from "@/components/ui/button.jsx"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { Sun, Moon } from "lucide-react"
+
 import {useState} from "react"
 
 function FakeNewsChecker() {
@@ -8,7 +12,7 @@ function FakeNewsChecker() {
     const [verdict, setVerdict] = useState("")
     const [summary, setSummary] = useState("")
     const [reasoning, setReasoning] = useState("")
-
+    const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));    
 
     // function to handle the check button click
     const handleCheck = () => {
@@ -22,6 +26,17 @@ function FakeNewsChecker() {
             setReasoning("Verified news outlets and official reports back the claim. The article includes accurate data, quotes from known sources, and follows journalistic standards, indicating it is authentic and trustworthy.")
         }
     }
+
+    //toogle theme function
+    const toggleTheme = (value) => {
+        setIsDark(value);
+        if (value) {
+            document.documentElement.classList.add("dark")
+        } else {
+            document.documentElement.classList.remove("dark")
+        }
+    }
+
 
 
   return (
@@ -51,7 +66,7 @@ function FakeNewsChecker() {
         {/* ------- Check Button -------- */}
         <div>
             <Button 
-            variant="light" 
+            variant="outline"
             onClick={handleCheck} 
             >
                 Check News
@@ -90,6 +105,21 @@ function FakeNewsChecker() {
             </div>
         </div>
 
+
+        {/* -------toogle theme button ------ */}
+        <div className="absolute top-20 right-60 flex items-center space-x-2">
+            <Switch
+                id="theme-toggle"
+                onCheckedChange={toggleTheme}
+                aria-label="Toggle dark mode"
+            />
+            {isDark ? (
+            <Sun className="w-4 h-4 text-white" />
+            ) : (
+                <Moon className="w-4 h-4 text-white" />
+            )
+        }
+        </div>
 
     </div>
   )
