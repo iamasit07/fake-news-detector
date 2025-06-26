@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "fake-news-detector-backend"
+version = "0.1.0"
+description = ""
+authors = ["YashGupta-24 <yashgupta.241103@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+uagents = "^0.22.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
