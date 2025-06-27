@@ -41,7 +41,7 @@ function FakeNewsChecker() {
 
     return (
 
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6">
             <h1 className="text-2xl font-bold dark:text-gray-100">
                 Fake News Detector
             </h1>
@@ -50,7 +50,7 @@ function FakeNewsChecker() {
             <div className="space-y-2">
                 <label
                     htmlFor="news-query"
-                    className="block text-sm font-medium text-white dark:text-white"
+                    className="block text-sm font-medium dark:text-white"
                 >
                     Enter News
                 </label>
@@ -75,8 +75,8 @@ function FakeNewsChecker() {
 
             {/* ------- Show Verdict Below Button ------ */}
             {verdict && (
-                <div className="mt-4 text-lg font-semibold text-white">
-                    Verdict:{" "}
+                <div className="mt-4 text-lg font-semibold">
+                    Verdict :{" "}
                     <span className={verdict === "Fake" ? "text-red-400" : "text-green-400"}>
                         {verdict}
                     </span>
@@ -85,7 +85,7 @@ function FakeNewsChecker() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                 {/* Summary Block */}
-                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+                <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                         Summary
                     </h2>
@@ -95,7 +95,7 @@ function FakeNewsChecker() {
                 </div>
 
                 {/* Reasoning Block */}
-                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+                <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                         Reasoning
                     </h2>
@@ -116,7 +116,7 @@ function FakeNewsChecker() {
                 {isDark ? (
                     <Sun className="w-4 h-4 text-white" />
                 ) : (
-                    <Moon className="w-4 h-4 text-white" />
+                    <Moon className="w-4 h-4 text-foreground" />
                 )
                 }
             </div>
