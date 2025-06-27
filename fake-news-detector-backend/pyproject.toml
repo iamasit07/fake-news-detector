@@ -4,11 +4,12 @@ version = "0.1.0"
 description = ""
 authors = ["YashGupta-24 <yashgupta.241103@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
 uagents = "^0.22.5"
-
+flask = "^3.1.1"
 
 [build-system]
 requires = ["poetry-core"]
