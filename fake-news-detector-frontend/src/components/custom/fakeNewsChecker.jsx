@@ -4,7 +4,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Sun, Moon } from "lucide-react"
 
-import {useState} from "react"
+import { useState } from "react"
 
 function FakeNewsChecker() {
 
@@ -12,7 +12,7 @@ function FakeNewsChecker() {
     const [verdict, setVerdict] = useState("")
     const [summary, setSummary] = useState("")
     const [reasoning, setReasoning] = useState("")
-    const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));    
+    const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));
 
     // function to handle the check button click
     const handleCheck = () => {
@@ -39,90 +39,90 @@ function FakeNewsChecker() {
 
 
 
-  return (
+    return (
 
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold dark:text-gray-100">
-        Fake News Detector
-      </h1>
+        <div className="max-w-4xl mx-auto p-6 space-y-6">
+            <h1 className="text-2xl font-bold dark:text-gray-100">
+                Fake News Detector
+            </h1>
 
-        {/** ------- input field for user to enter news or statement------ */} 
-        <div className="space-y-2">
-            <label
-                htmlFor="news-query"
-                className="block text-sm font-medium text-white dark:text-white"
-            >
-            Enter News
-            </label>
-            <Input
-                id="news-query"
-                placeholder="Enter your news or statement here"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-            />
-        </div>
-
-        {/* ------- Check Button -------- */}
-        <div>
-            <Button 
-            variant="outline"
-            onClick={handleCheck} 
-            >
-                Check News
-            </Button>
-        </div>
-
-        {/* ------- Show Verdict Below Button ------ */}
-        {verdict && (
-            <div className="mt-4 text-lg font-semibold text-white">
-            Verdict:{" "}
-            <span className={verdict === "Fake" ? "text-red-400" : "text-green-400"}>
-                {verdict}
-            </span>
-            </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        {/* Summary Block */}
-            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                    Summary
-                </h2>
-                <p className="text-gray-700 dark:text-gray-300">
-                    {summary || "Summary will appear here after checking."}
-                </p>
+            {/** ------- input field for user to enter news or statement------ */}
+            <div className="space-y-2">
+                <label
+                    htmlFor="news-query"
+                    className="block text-sm font-medium text-white dark:text-white"
+                >
+                    Enter News
+                </label>
+                <Input
+                    id="news-query"
+                    placeholder="Enter your news or statement here"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
             </div>
 
-            {/* Reasoning Block */}
-            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                    Reasoning
-                </h2>
-                <p className="text-gray-700 dark:text-gray-300">
-                    {reasoning || "Reasoning will appear here after checking."}
-                </p>
+            {/* ------- Check Button -------- */}
+            <div>
+                <Button
+                    variant="outline"
+                    onClick={handleCheck}
+                >
+                    Check News
+                </Button>
             </div>
+
+            {/* ------- Show Verdict Below Button ------ */}
+            {verdict && (
+                <div className="mt-4 text-lg font-semibold text-white">
+                    Verdict:{" "}
+                    <span className={verdict === "Fake" ? "text-red-400" : "text-green-400"}>
+                        {verdict}
+                    </span>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                {/* Summary Block */}
+                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                        Summary
+                    </h2>
+                    <p className="text-gray-700 dark:text-gray-300">
+                        {summary || "Summary will appear here after checking."}
+                    </p>
+                </div>
+
+                {/* Reasoning Block */}
+                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                        Reasoning
+                    </h2>
+                    <p className="text-gray-700 dark:text-gray-300">
+                        {reasoning || "Reasoning will appear here after checking."}
+                    </p>
+                </div>
+            </div>
+
+
+            {/* -------toogle theme button ------ */}
+            <div className="absolute top-20 right-60 flex items-center space-x-2">
+                <Switch
+                    id="theme-toggle"
+                    onCheckedChange={toggleTheme}
+                    aria-label="Toggle dark mode"
+                />
+                {isDark ? (
+                    <Sun className="w-4 h-4 text-white" />
+                ) : (
+                    <Moon className="w-4 h-4 text-white" />
+                )
+                }
+            </div>
+
         </div>
-
-
-        {/* -------toogle theme button ------ */}
-        <div className="absolute top-20 right-60 flex items-center space-x-2">
-            <Switch
-                id="theme-toggle"
-                onCheckedChange={toggleTheme}
-                aria-label="Toggle dark mode"
-            />
-            {isDark ? (
-            <Sun className="w-4 h-4 text-white" />
-            ) : (
-                <Moon className="w-4 h-4 text-white" />
-            )
-        }
-        </div>
-
-    </div>
-  )
+    )
 }
 
-export {FakeNewsChecker};
+export { FakeNewsChecker };
