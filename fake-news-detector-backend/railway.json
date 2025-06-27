@@ -4,4 +4,4 @@
         "buildCommand": "poetry install --no-root || pip install -r requirements.txt",
         "startCommand": "python server/rest.py"
     }
-}git 
+}
