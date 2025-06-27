@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button.jsx"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Sun, Moon } from "lucide-react"
-
 import { useState } from "react"
+import Typewriter from "typewriter-effect"
 
 function FakeNewsChecker() {
 
@@ -89,9 +89,17 @@ function FakeNewsChecker() {
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                         Summary
                     </h2>
-                    <p className="text-gray-700 dark:text-gray-300">
-                        {summary || "Summary will appear here after checking."}
-                    </p>
+                    <Typewriter 
+                        className="text-gray-700 dark:text-gray-300"
+                        options={{
+                            strings:[summary || "Summary will appear here after checking."],
+                            autoStart: true,
+                            delay: 45,
+                            deleteSpeed: Infinity,
+                            cursor: "",
+                        }}
+                        
+                    />
                 </div>
 
                 {/* Reasoning Block */}
@@ -99,9 +107,18 @@ function FakeNewsChecker() {
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                         Reasoning
                     </h2>
-                    <p className="text-gray-700 dark:text-gray-300">
-                        {reasoning || "Reasoning will appear here after checking."}
-                    </p>
+
+                    <Typewriter 
+                        className="text-gray-700 dark:text-gray-300"
+                        options={{
+                            strings:[reasoning || 'Reasoning will appear here after checking.'],
+                            autoStart: true,
+                            delay: 45,
+                            deleteSpeed: Infinity,
+                            cursor: "",
+                        }}
+                        
+                    />
                 </div>
             </div>
 
