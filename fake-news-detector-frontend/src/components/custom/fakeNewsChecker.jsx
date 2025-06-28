@@ -41,7 +41,7 @@ function FakeNewsChecker() {
 
     return (
 
-        <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6">
+        <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6 ">
             <h1 className="text-2xl font-bold dark:text-gray-100">
                 Fake News Detector
             </h1>
@@ -83,24 +83,27 @@ function FakeNewsChecker() {
                 </div>
             )}
 
+            {/* ------------- Sources text ------------- */}
+            <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                    Sources
+                </h2>
+
+                <Typewriter 
+                    className="text-gray-700 dark:text-gray-300"
+                    options={{
+                        strings:['Sources will appear here after checking.'],
+                        autoStart: true,
+                        delay: 50,
+                        deleteSpeed: Infinity,
+                        cursor: "",
+                    }}
+                    
+                />
+            </div>
+
+            {/* Reasoning and Summary */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                {/* Summary Block */}
-                <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                        Summary
-                    </h2>
-                    <Typewriter 
-                        className="text-gray-700 dark:text-gray-300"
-                        options={{
-                            strings:[summary || "Summary will appear here after checking."],
-                            autoStart: true,
-                            delay: 45,
-                            deleteSpeed: Infinity,
-                            cursor: "",
-                        }}
-                        
-                    />
-                </div>
 
                 {/* Reasoning Block */}
                 <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
@@ -120,6 +123,25 @@ function FakeNewsChecker() {
                         
                     />
                 </div>
+
+                {/* Summary Block */}
+                <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                        Summary
+                    </h2>
+                    <Typewriter 
+                        className="text-gray-700 dark:text-gray-300"
+                        options={{
+                            strings:[summary || "Summary will appear here after checking."],
+                            autoStart: true,
+                            delay: 45,
+                            deleteSpeed: Infinity,
+                            cursor: "",
+                        }}
+                        
+                    />
+                </div>
+
             </div>
 
 
