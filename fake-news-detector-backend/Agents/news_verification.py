@@ -36,25 +36,26 @@ Headline: "{headline}"
 Web Search Data: "{web_data}"
 
 Evaluation Criteria:
-1. Event Occurrence: Confirm whether the event mentioned in the headline actually took place.
-2. Date Detection: Identify the actual date of the event if it occurred.
-3. Location Accuracy: Ensure the event location in the headline matches the event location in the sources.
-4. Misinformation Detection: If the event was fabricated, misleading, or not mentioned in the data, treat it as Fake.
+1. Authenticity: Determine if the event in the headline is fully true, partially true, or false based on the data.
+2. Partial Truth: If some parts of the headline are accurate (e.g., event occurred but date/location is wrong), classify it as Partially True.
+3. Falsehood: If the event did not happen or cannot be confirmed at all, classify as False.
+4. Date Detection: If the event occurred, identify and include the actual date in the summary.
+5. Location Verification: Ensure the headline location aligns with the real event location from credible sources.
+6. Source Recognition: Extract and mention the names or domains of sources that validate or refute the headline..
 
 Important Guidelines:
 1. Mark the headline as Fake only if the event did not occur or is a misrepresentation of reality.
 2. Do not assume or rely on external knowledge. Use only the web search data provided.
 3. If no reliable source confirms the event, treat it as fake.
-4. Do not generate summaries for Fake headlines.
+4. Keep the Reason and Summary around 80 words each.
 5. If the headline is Valid, ensure the summary clearly includes the actual date of the event.
+6. If the verdict is False, return "null" for the Summary field.
 
 Format of Output:
-1. The headline "{headline}" is Valid/Fake. (Choose one based on your analysis)
-2. A brief reasoning explaining your validation reasoning.
-3. If the news is Valid, add a summary of the incident in 60 words or less.
-
-Note: If the news is Fake, skip the summary section.
-
+Verdict: True / Partially True / False
+Reason: [Your reasoning in 80 words]
+Summary: [80 words summarizing the event with actual date if applicable OR "null" if verdict is False]
+Sources: [List of news source names or domains as shared by Tavily, separated by commas]
 
 """
 
