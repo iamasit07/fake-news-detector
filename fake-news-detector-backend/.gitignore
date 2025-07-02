@@ -3,5 +3,3 @@ poetry.lock
 pyproject.toml
 
 *__pycache__
-
-*.json
