@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Sun, Moon } from "lucide-react"
 import { useState } from "react"
 import Typewriter from "typewriter-effect"
+import axios from "axios"
 
 function FakeNewsChecker() {
 
@@ -15,17 +16,43 @@ function FakeNewsChecker() {
     const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));
 
     // function to handle the check button click
-    const handleCheck = () => {
-        if (query.toLowerCase().includes("fake")) {
-            setVerdict("Fake")
-            setSummary("This news appears to be misleading, lacking credible sources or verified data. The content uses emotionally charged language and presents claims without supporting evidence, raising strong suspicion of misinformation.")
-            setReasoning("The article contains exaggerated statements and no official references. It exhibits classic patterns of fake news, including manipulation tactics, anonymous sources, and the absence of factual consistency with established reports.")
-        } else {
-            setVerdict("Valid")
-            setSummary("The news seems genuine and aligns with facts reported by multiple reputable sources. The language is neutral and the information is well-structured, reflecting a high degree of reliability and clarity.")
-            setReasoning("Verified news outlets and official reports back the claim. The article includes accurate data, quotes from known sources, and follows journalistic standards, indicating it is authentic and trustworthy.")
+    const handleCheck = async (e) => {
+
+        e.preventDefault()
+
+        if (!query.trim()){
+            return;
         }
-    }
+
+        try {
+            const res = await axios.post("http://localhost:8080/news", {
+                query: query,
+            });
+
+            setQuery("")
+
+            console.log("Data received from backend is: " , res)
+            const msg = res.data.msg;
+                   
+            const verdictMatch = msg.match(/is \*\*(\w+)\*\*/);
+            const reasoningMatch = msg.match(/\*\*Reasoning\*\*:\s*([\s\S]*?)\n\s*\n/);
+            const summaryMatch = msg.match(/\*\*Summary\*\*:([\s\S]*?)\n\n/);
+
+            const verdict = verdictMatch?.[1] || "Unknown";
+            const reasoning = reasoningMatch?.[1] || "No reasoning available.";
+            const summary = summaryMatch?.[1] || "No summary available.";
+
+            setVerdict(verdict);
+            setReasoning(reasoning);
+            setSummary(summary);
+        } catch (err) {
+            console.error("Error checking headline:", err);
+            setVerdict("Error");
+            setReasoning("Failed to fetch response from server.");
+            setSummary("Please try again later.");
+        }
+    };
+
 
     //toogle theme function
     const toggleTheme = (value) => {
@@ -47,7 +74,9 @@ function FakeNewsChecker() {
             </h1>
 
             {/** ------- input field for user to enter news or statement------ */}
-            <div className="space-y-2">
+            <form 
+            onSubmit={handleCheck}
+            className="space-y-2">
                 <label
                     htmlFor="news-query"
                     className="block text-sm font-medium dark:text-white"
@@ -61,7 +90,7 @@ function FakeNewsChecker() {
                     onChange={(e) => setQuery(e.target.value)}
                     className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 />
-            </div>
+            </form>
 
             {/* ------- Check Button -------- */}
             <div>
@@ -77,7 +106,7 @@ function FakeNewsChecker() {
             {verdict && (
                 <div className="mt-4 text-lg font-semibold">
                     Verdict :{" "}
-                    <span className={verdict === "Fake" ? "text-red-400" : "text-green-400"}>
+                    <span className={verdict === "Fake" ? "text-green-400" : "text-red-400"}>
                         {verdict}
                     </span>
                 </div>
