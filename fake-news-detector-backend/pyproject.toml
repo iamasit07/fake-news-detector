@@ -7,9 +7,10 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.10,<3.14"
 uagents = "^0.22.5"
 flask = "^3.1.1"
+grpcio = "1.51.1"
 
 [build-system]
 requires = ["poetry-core"]
