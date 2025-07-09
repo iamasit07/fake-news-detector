@@ -10,7 +10,7 @@ class NewsResult(Model):
 class NewsResponse(Model):
     msg: str
 
-rest_agent=Agent(name="Rest Agent", seed="I am the Rest Agent", port=8080, endpoint="http://localhost:8080/submit")
+rest_agent=Agent(name="Rest Agent", seed="I am the Rest Agent", port=8080, endpoint="https://fake-news-detector-46qg.onrender.com/submit")
 
 news_agent = 'agent1qdd95k4ffs8g32905a6dj5rrc4suqd53ndaw8jafesq7f2z2fhu2ujy43wx'
 
