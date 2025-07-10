@@ -6,6 +6,7 @@ import { Sun, Moon } from "lucide-react"
 import { useState } from "react"
 import Typewriter from "typewriter-effect"
 import axios from "axios"
+import PageLoader from "./PageLoader"
 
 function FakeNewsChecker() {
 
@@ -14,6 +15,7 @@ function FakeNewsChecker() {
     const [summary, setSummary] = useState("")
     const [reasoning, setReasoning] = useState("")
     const [sources, setSources] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
 
     const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));
 
@@ -27,17 +29,20 @@ function FakeNewsChecker() {
         }
 
         try {
-            // const res = await axios.post("https://fake-news-detector-46qg.onrender.com/news", {
-            //     query: query,
-            // });
+            setIsLoading(true)
 
-            // setQuery("")
+            const res = await axios.post("https://fake-news-detector-46qg.onrender.com/news", {
+                query: query,
+            });
 
-            // console.log("Data received from backend is: " , res)
-            // const msg = res.data.msg;
+            setIsLoading(false);
+            setQuery("")
+
+            console.log("Data received from backend is: " , res)
+            const msg = res.data.msg;
 
             // const msg = "Verdict: True  \nReason: The headline states that a \"president implemented national emergency,\" which aligns with multiple verified instances where U.S. presidents have declared national emergencies, including President Trump in 2019, 2020, and 2025. However, the headline lacks specificity (e.g., which president, which emergency), making it partially true. The web data confirms such declarations occurred but does not validate an exact match to the vague headline.  \n\nSummary: U.S. presidents, including Trump, have declared national emergencies, such as the Southern Border emergency (February 15, 2019, renewed in 2020 and January 20, 2025). The headline is partially accurate but lacks details.  \n\nSources: Tavily (referencing National Emergencies Act, 1976; Trump's 2019, 2020, and 2025 declarations)."
-            const msg= "Verdict: False  \nReason: The headline \"i am spiderman\" does not refer to a real-world event or verifiable claim. The web search data only discusses fictional and metaphorical references to Spider-Man from media (e.g., movies, music, comic lore) and does not provide evidence of an actual occurrence. No credible sources confirm a factual basis for the headline.  \n\nSummary: null  \nSources: Columbia Records (music), Marvel Comics-related content  \n\nNote: The search results pertain to entertainment contexts rather than real-world events, reinforcing the lack of authenticity."       
+            // const msg= "Verdict: False  \nReason: The headline \"i am spiderman\" does not refer to a real-world event or verifiable claim. The web search data only discusses fictional and metaphorical references to Spider-Man from media (e.g., movies, music, comic lore) and does not provide evidence of an actual occurrence. No credible sources confirm a factual basis for the headline.  \n\nSummary: null  \nSources: Columbia Records (music), Marvel Comics-related content  \n\nNote: The search results pertain to entertainment contexts rather than real-world events, reinforcing the lack of authenticity."       
 
             const verdictMatch = msg.match(/Verdict:\s*(.+?)\s{2,}/);
             const reasonMatch = msg.match(/Reason:\s*([\s\S]*?)\n\s*\n/);
@@ -82,7 +87,10 @@ function FakeNewsChecker() {
 
     return (
 
-        <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6 ">
+        isLoading? 
+        (<PageLoader/>) : 
+        (
+            <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6 ">
             <h1 className="text-2xl font-bold dark:text-gray-100">
                 Fake News Detector
             </h1>
@@ -204,6 +212,8 @@ function FakeNewsChecker() {
             </div>
 
         </div>
+        )
+        
     )
 }
 
