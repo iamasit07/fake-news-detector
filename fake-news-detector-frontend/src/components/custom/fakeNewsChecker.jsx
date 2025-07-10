@@ -13,6 +13,8 @@ function FakeNewsChecker() {
     const [verdict, setVerdict] = useState("")
     const [summary, setSummary] = useState("")
     const [reasoning, setReasoning] = useState("")
+    const [sources, setSources] = useState("")
+
     const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));
 
     // function to handle the check button click
@@ -25,31 +27,43 @@ function FakeNewsChecker() {
         }
 
         try {
-            const res = await axios.post("http://localhost:8080/news", {
-                query: query,
-            });
+            // const res = await axios.post("https://fake-news-detector-46qg.onrender.com/news", {
+            //     query: query,
+            // });
 
-            setQuery("")
+            // setQuery("")
 
-            console.log("Data received from backend is: " , res)
-            const msg = res.data.msg;
-                   
-            const verdictMatch = msg.match(/is \*\*(\w+)\*\*/);
-            const reasoningMatch = msg.match(/\*\*Reasoning\*\*:\s*([\s\S]*?)\n\s*\n/);
-            const summaryMatch = msg.match(/\*\*Summary\*\*:([\s\S]*?)\n\n/);
+            // console.log("Data received from backend is: " , res)
+            // const msg = res.data.msg;
 
-            const verdict = verdictMatch?.[1] || "Unknown";
-            const reasoning = reasoningMatch?.[1] || "No reasoning available.";
-            const summary = summaryMatch?.[1] || "No summary available.";
+            // const msg = "Verdict: True  \nReason: The headline states that a \"president implemented national emergency,\" which aligns with multiple verified instances where U.S. presidents have declared national emergencies, including President Trump in 2019, 2020, and 2025. However, the headline lacks specificity (e.g., which president, which emergency), making it partially true. The web data confirms such declarations occurred but does not validate an exact match to the vague headline.  \n\nSummary: U.S. presidents, including Trump, have declared national emergencies, such as the Southern Border emergency (February 15, 2019, renewed in 2020 and January 20, 2025). The headline is partially accurate but lacks details.  \n\nSources: Tavily (referencing National Emergencies Act, 1976; Trump's 2019, 2020, and 2025 declarations)."
+            const msg= "Verdict: False  \nReason: The headline \"i am spiderman\" does not refer to a real-world event or verifiable claim. The web search data only discusses fictional and metaphorical references to Spider-Man from media (e.g., movies, music, comic lore) and does not provide evidence of an actual occurrence. No credible sources confirm a factual basis for the headline.  \n\nSummary: null  \nSources: Columbia Records (music), Marvel Comics-related content  \n\nNote: The search results pertain to entertainment contexts rather than real-world events, reinforcing the lack of authenticity."       
+
+            const verdictMatch = msg.match(/Verdict:\s*(.+?)\s{2,}/);
+            const reasonMatch = msg.match(/Reason:\s*([\s\S]*?)\n\s*\n/);
+            const summaryMatch = msg.match(/Summary:\s*(.+?)\s{2,}/);
+            const sourcesMatch = msg.match(/Sources:\s*([\s\S]*?)$/m);
+
+            const verdict = verdictMatch?.[1]?.trim() || "Unknown";
+            const reasoning = reasonMatch?.[1]?.trim() || "No reasoning available.";
+            const sources = sourcesMatch?.[1]?.trim() || "No sources available.";
+
+            let summaryRaw = summaryMatch?.[1]?.trim() || "";
+            const summary = summaryRaw.toLowerCase() === "null" ? "No summary available" : summaryRaw;
+
+            console.log({ verdict, reasoning, summary, sources });
 
             setVerdict(verdict);
             setReasoning(reasoning);
             setSummary(summary);
+            setSources(sources)
+
         } catch (err) {
             console.error("Error checking headline:", err);
             setVerdict("Error");
             setReasoning("Failed to fetch response from server.");
             setSummary("Please try again later.");
+            setSources("No sources available")
         }
     };
 
@@ -106,7 +120,7 @@ function FakeNewsChecker() {
             {verdict && (
                 <div className="mt-4 text-lg font-semibold">
                     Verdict :{" "}
-                    <span className={verdict === "Fake" ? "text-green-400" : "text-red-400"}>
+                    <span className={verdict === "Partially True" || verdict === 'True' ? "text-green-400" : "text-red-400"}>
                         {verdict}
                     </span>
                 </div>
@@ -121,9 +135,9 @@ function FakeNewsChecker() {
                 <Typewriter 
                     className="text-gray-700 dark:text-gray-300"
                     options={{
-                        strings:['Sources will appear here after checking.'],
+                        strings:[sources || 'Sources will appear here after checking.'],
                         autoStart: true,
-                        delay: 50,
+                        delay: 35,
                         deleteSpeed: Infinity,
                         cursor: "",
                     }}
@@ -145,7 +159,7 @@ function FakeNewsChecker() {
                         options={{
                             strings:[reasoning || 'Reasoning will appear here after checking.'],
                             autoStart: true,
-                            delay: 45,
+                            delay: 30,
                             deleteSpeed: Infinity,
                             cursor: "",
                         }}
@@ -163,7 +177,7 @@ function FakeNewsChecker() {
                         options={{
                             strings:[summary || "Summary will appear here after checking."],
                             autoStart: true,
-                            delay: 45,
+                            delay: 30,
                             deleteSpeed: Infinity,
                             cursor: "",
                         }}
