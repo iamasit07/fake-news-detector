@@ -91,9 +91,26 @@ function FakeNewsChecker() {
         (<PageLoader/>) : 
         (
             <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6 ">
-            <h1 className="text-2xl font-bold dark:text-gray-100">
-                Fake News Detector
-            </h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold dark:text-gray-100">
+                    Fake News Detector
+                </h1>
+                
+                {/* -------toogle theme button ------ */}
+                <div className="flex items-center space-x-2">
+                    <Switch
+                        id="theme-toggle"
+                        onCheckedChange={toggleTheme}
+                        aria-label="Toggle dark mode"
+                    />
+                    {isDark ? (
+                        <Sun className="w-4 h-4 text-white" />
+                    ) : (
+                        <Moon className="w-4 h-4 text-foreground" />
+                    )
+                    }
+                </div>
+            </div>
 
             {/** ------- input field for user to enter news or statement------ */}
             <form 
@@ -193,22 +210,6 @@ function FakeNewsChecker() {
                     />
                 </div>
 
-            </div>
-
-
-            {/* -------toogle theme button ------ */}
-            <div className="absolute top-20 right-60 flex items-center space-x-2">
-                <Switch
-                    id="theme-toggle"
-                    onCheckedChange={toggleTheme}
-                    aria-label="Toggle dark mode"
-                />
-                {isDark ? (
-                    <Sun className="w-4 h-4 text-white" />
-                ) : (
-                    <Moon className="w-4 h-4 text-foreground" />
-                )
-                }
             </div>
 
         </div>
