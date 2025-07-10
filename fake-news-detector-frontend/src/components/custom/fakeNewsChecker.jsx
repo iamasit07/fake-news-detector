@@ -54,7 +54,7 @@ function FakeNewsChecker() {
             const sources = sourcesMatch?.[1]?.trim() || "No sources available.";
 
             let summaryRaw = summaryMatch?.[1]?.trim() || "";
-            const summary = summaryRaw.toLowerCase() === "null" ? "No summary available" : summaryRaw;
+            const summary = summaryRaw.toLowerCase() === "null" || summaryRaw == "" ? "No summary available" : summaryRaw;
 
             console.log({ verdict, reasoning, summary, sources });
 
