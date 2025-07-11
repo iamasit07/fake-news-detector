@@ -1,0 +1,7 @@
+uagents
+uagents-core
+fastapi
+uvicorn
+python-multipart
+requests
+pydantic
