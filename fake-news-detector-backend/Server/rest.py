@@ -12,7 +12,7 @@ class NewsResponse(Model):
     msg: str
 
 port=8080
-endpoint= f'http://localhost:8080/submit'
+endpoint= f'https://fake-news-detector-46qg.onrender.com/submit'
 
 rest_agent = Agent(
     name="Rest Agent", 
