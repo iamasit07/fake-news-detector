@@ -12,6 +12,7 @@ class NewsResponse(Model):
     msg: str
 
 port=8080
+endpoint= f'http://localhost:8080/submit'
 
 rest_agent = Agent(
     name="Rest Agent", 
