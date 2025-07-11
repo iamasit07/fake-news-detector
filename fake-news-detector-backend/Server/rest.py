@@ -11,15 +11,7 @@ class NewsResult(Model):
 class NewsResponse(Model):
     msg: str
 
-# Get port from environment variable (Railway provides this)
-port = int(os.environ.get("PORT", 8080))
-
-# Use Railway's provided URL or fallback to localhost for development
-railway_url = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
-if railway_url:
-    endpoint = f"https://{railway_url}/submit"
-else:
-    endpoint = f"http://localhost:{port}/submit"
+port=8080
 
 rest_agent = Agent(
     name="Rest Agent", 
