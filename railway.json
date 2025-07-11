@@ -1,0 +1,7 @@
+{
+    "build": {
+        "builder": "nixpacks",
+        "buildCommand": "cd fake-news-detector-backend && poetry install",
+        "startCommand": "cd fake-news-detector-backend && poetry run python Agents/agent.py"
+    }
+}
