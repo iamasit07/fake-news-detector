@@ -9,7 +9,7 @@ from uagents_core.models import ErrorMessage
 from news_chat_proto import chat_proto, struct_output_client_proto
 from news_verification import verify_news, NewsRequest, NewsResult
 
-agent = Agent(name="Main Agent", seed="Main Agent", port=8009, mailbox=True)
+agent = Agent(name="Main Agent", seed="Main Agents", port=8009, proxy=True)
 
 fund_agent_if_low(agent.wallet.address()) #type:ignore
 
