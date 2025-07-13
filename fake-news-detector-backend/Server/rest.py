@@ -21,7 +21,7 @@ rest_agent = Agent(
     endpoint=endpoint
 )
 
-news_agent = 'agent1qdd95k4ffs8g32905a6dj5rrc4suqd53ndaw8jafesq7f2z2fhu2ujy43wx'
+news_agent = 'agent1qwkkq47cjw82uqtw6t8ts3rdsnjy5a2dxnwdla7uy9vnv4a3eynk2yjr638'
 
 fund_agent_if_low(rest_agent.wallet.address())
 
