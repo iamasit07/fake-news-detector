@@ -12,13 +12,11 @@ class NewsResponse(Model):
     msg: str
 
 port=8080
-endpoint= f'https://fake-news-detector-46qg.onrender.com/submit'
 
 rest_agent = Agent(
     name="Rest Agent", 
     seed="I am the Rest Agent", 
-    port=port, 
-    endpoint=endpoint
+    port=port
 )
 
 news_agent = 'agent1qwkkq47cjw82uqtw6t8ts3rdsnjy5a2dxnwdla7uy9vnv4a3eynk2yjr638'
@@ -28,7 +26,6 @@ fund_agent_if_low(rest_agent.wallet.address())
 @rest_agent.on_event('startup')
 async def startup(ctx: Context):
     print(f"News Agent is starting up on port {port}...")
-    print(f"Endpoint: {endpoint}")
 
 @rest_agent.on_rest_get('/', NewsResult)
 async def index(ctx: Context) -> NewsResponse:
