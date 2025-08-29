@@ -1,0 +1,8 @@
+uagents>=0.12.0
+uagents-core
+fastapi
+uvicorn[standard]
+python-multipart
+requests
+pydantic
+python-dotenv
