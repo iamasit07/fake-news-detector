@@ -132,7 +132,7 @@ The backend should run at `localhost:8009`.
 
 ## 📸 Preview Images
 Example:
-![Landing Page](./Screenshot from 2025-09-22 21-00-39.png)
+![Landing Page](./landingPage.png)
 
 ---
 
