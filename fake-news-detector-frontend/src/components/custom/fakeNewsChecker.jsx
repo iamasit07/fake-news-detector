@@ -7,10 +7,12 @@ import { useState } from "react"
 import Typewriter from "typewriter-effect"
 import axios from "axios"
 import PageLoader from "./PageLoader"
+import { set } from "date-fns"
 
 function FakeNewsChecker() {
 
     const [query, setQuery] = useState("")
+    const [prvsQuery, setPrvsQuery] = useState("")
     const [verdict, setVerdict] = useState("")
     const [summary, setSummary] = useState("")
     const [reasoning, setReasoning] = useState("")
@@ -36,6 +38,7 @@ function FakeNewsChecker() {
             });
 
             setIsLoading(false);
+            setPrvsQuery(query)
             setQuery("")
 
             console.log("Data received from backend is: ", res)
