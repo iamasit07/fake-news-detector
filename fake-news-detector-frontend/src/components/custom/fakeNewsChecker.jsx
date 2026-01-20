@@ -42,13 +42,13 @@ function FakeNewsChecker() {
             setQuery("")
 
             console.log("Data received from backend is: " , res)
-            // const msg = res.data.msg;
+            const msg = res.data.msg;
 
-            // const msg = "Verdict: True  \nReason: The headline states that a \"president implemented national emergency,\" which aligns with multiple verified instances where U.S. presidents have declared national emergencies, including President Trump in 2019, 2020, and 2025. However, the headline lacks specificity (e.g., which president, which emergency), making it partially true. The web data confirms such declarations occurred but does not validate an exact match to the vague headline.  \n\nSummary: U.S. presidents, including Trump, have declared national emergencies, such as the Southern Border emergency (February 15, 2019, renewed in 2020 and January 20, 2025). The headline is partially accurate but lacks details.  \n\nSources: Tavily (referencing National Emergencies Act, 1976; Trump's 2019, 2020, and 2025 declarations)."
+            // const msg = "Verdict: False  \nReason: The search results indicate that tweets claiming Obama's death were from a hacked Fox News Twitter account, not credible reports. No reliable source confirms the event. Mentions of a chef’s drowning do not relate to Obama. Multiple entries describe the same false tweet scenario, reinforcing it as a hoax. Without corroboration from authoritative sources, the claim cannot be deemed true.  \nSummary: null  \nSources: Fox News, FoxNews.com, Tavily"
             // const msg= "Verdict: False  \nReason: The headline \"i am spiderman\" does not refer to a real-world event or verifiable claim. The web search data only discusses fictional and metaphorical references to Spider-Man from media (e.g., movies, music, comic lore) and does not provide evidence of an actual occurrence. No credible sources confirm a factual basis for the headline.  \n\nSummary: null  \nSources: Columbia Records (music), Marvel Comics-related content  \n\nNote: The search results pertain to entertainment contexts rather than real-world events, reinforcing the lack of authenticity."       
 
             const verdictMatch = msg.match(/Verdict:\s*(.+?)\s{2,}/);
-            const reasonMatch = msg.match(/Reason:\s*([\s\S]*?)\n\s*\n/);
+            const reasonMatch = msg.match(/Reason:\s*([\s\S]*?)\s*Summary:/);
             const summaryMatch = msg.match(/Summary:\s*(.+?)\s{2,}/);
             const sourcesMatch = msg.match(/Sources:\s*([\s\S]*?)$/m);
 
