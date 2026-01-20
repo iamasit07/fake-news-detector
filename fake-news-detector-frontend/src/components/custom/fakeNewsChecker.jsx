@@ -41,8 +41,8 @@ function FakeNewsChecker() {
             setPrvsQuery(query)
             setQuery("")
 
-            console.log("Data received from backend is: " , res)
-            const msg = res.data.msg;
+            console.log("Data received from backend is: ", res)
+            const msg = res.data.response;
 
             // const msg = "Verdict: False  \nReason: The search results indicate that tweets claiming Obama's death were from a hacked Fox News Twitter account, not credible reports. No reliable source confirms the event. Mentions of a chef’s drowning do not relate to Obama. Multiple entries describe the same false tweet scenario, reinforcing it as a hoax. Without corroboration from authoritative sources, the claim cannot be deemed true.  \nSummary: null  \nSources: Fox News, FoxNews.com, Tavily"
             // const msg= "Verdict: False  \nReason: The headline \"i am spiderman\" does not refer to a real-world event or verifiable claim. The web search data only discusses fictional and metaphorical references to Spider-Man from media (e.g., movies, music, comic lore) and does not provide evidence of an actual occurrence. No credible sources confirm a factual basis for the headline.  \n\nSummary: null  \nSources: Columbia Records (music), Marvel Comics-related content  \n\nNote: The search results pertain to entertainment contexts rather than real-world events, reinforcing the lack of authenticity."       

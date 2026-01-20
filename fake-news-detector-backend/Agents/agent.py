@@ -2,39 +2,28 @@ import os
 from enum import Enum
 
 from uagents import Agent, Context, Model
-from uagents.experimental.quota import QuotaProtocol, RateLimit
+from uagents.experimental.quota import QuotaProtocol
 from uagents.setup import fund_agent_if_low
-from uagents_core.models import ErrorMessage
 
 from news_chat_proto import chat_proto, struct_output_client_proto
 from news_verification import verify_news, NewsRequest, NewsResult
 
-agent = Agent(name="Main Agent", seed="Main Agent", port=8009, mailbox=True)
+agent = Agent(name="Central Agent", seed="Central Agent", port=8009, mailbox=True)
 
 fund_agent_if_low(agent.wallet.address()) #type:ignore
 
-proto = QuotaProtocol(
-    storage_reference=agent.storage,
-    name="News-Verification-Protocol",
-    version="0.1.0",
-    default_rate_limit=RateLimit(window_size_minutes=60, max_requests=50),
-)
-
-@proto.on_message(
-    NewsRequest, replies={NewsResult, ErrorMessage}
-)
-async def handle_news_request(ctx: Context, sender: str, msg: NewsRequest):
-    ctx.logger.info("Received news verification request")
+#Function to handle the rest call
+@agent.on_rest_post('/news', NewsRequest, NewsResult)
+async def get_news(ctx: Context, request: NewsRequest) -> NewsResult:
     try:
-        result = await verify_news(ctx, msg.query)
-        ctx.logger.info(f'News verification completed for: {msg.query}')
+        result = await verify_news(ctx, request.query)
+        ctx.logger.info(f'News verification completed for: {request.query}')
         ctx.logger.info("Successfully verified news")
-        await ctx.send(sender, NewsResult(response=result))
+        return NewsResult(response=result)
     except Exception as err:
         ctx.logger.error(err)
-        await ctx.send(sender, ErrorMessage(error=str(err)))
+        return NewsResult(response=str(err))
 
-agent.include(proto, publish_manifest=True)
 
 ### Health check related code
 def agent_is_healthy() -> bool:
@@ -43,7 +32,6 @@ def agent_is_healthy() -> bool:
     For example, check if the agent can connect to the Tavily API and ASI mini.
     """
     try:
-        # Simple health check - you can expand this
         return True
     except Exception:
         return False
