@@ -26,14 +26,14 @@ function FakeNewsChecker() {
 
         e.preventDefault()
 
-        if (!query.trim()){
+        if (!query.trim()) {
             return;
         }
 
         try {
             setIsLoading(true)
 
-            const res = await axios.post("https://fake-news-detector-46qg.onrender.com/news", {
+            const res = await axios.post("https://fake-news-detector-9z0l.onrender.com/news", {
                 query: query,
             });
 
@@ -41,8 +41,8 @@ function FakeNewsChecker() {
             setPrvsQuery(query)
             setQuery("")
 
-            console.log("Data received from backend is: " , res)
-            // const msg = res.data.msg;
+            console.log("Data received from backend is: ", res)
+            const msg = res.data.response;
 
             // const msg = "Verdict: True  \nReason: The headline states that a \"president implemented national emergency,\" which aligns with multiple verified instances where U.S. presidents have declared national emergencies, including President Trump in 2019, 2020, and 2025. However, the headline lacks specificity (e.g., which president, which emergency), making it partially true. The web data confirms such declarations occurred but does not validate an exact match to the vague headline.  \n\nSummary: U.S. presidents, including Trump, have declared national emergencies, such as the Southern Border emergency (February 15, 2019, renewed in 2020 and January 20, 2025). The headline is partially accurate but lacks details.  \n\nSources: Tavily (referencing National Emergencies Act, 1976; Trump's 2019, 2020, and 2025 declarations)."
             // const msg= "Verdict: False  \nReason: The headline \"i am spiderman\" does not refer to a real-world event or verifiable claim. The web search data only discusses fictional and metaphorical references to Spider-Man from media (e.g., movies, music, comic lore) and does not provide evidence of an actual occurrence. No credible sources confirm a factual basis for the headline.  \n\nSummary: null  \nSources: Columbia Records (music), Marvel Comics-related content  \n\nNote: The search results pertain to entertainment contexts rather than real-world events, reinforcing the lack of authenticity."       
@@ -90,15 +90,12 @@ function FakeNewsChecker() {
 
     return (
 
-        isLoading? 
-        (<PageLoader/>) : 
-        (
-            <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6 ">
+        <div className="text-foreground max-w-4xl mx-auto p-6 space-y-6 ">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold dark:text-gray-100">
                     Fake News Detector
                 </h1>
-                
+
                 {/* -------toogle theme button ------ */}
                 <div className="flex items-center space-x-2">
                     <Switch
@@ -116,9 +113,9 @@ function FakeNewsChecker() {
             </div>
 
             {/** ------- input field for user to enter news or statement------ */}
-            <form 
-            onSubmit={handleCheck}
-            className="space-y-2">
+            <form
+                onSubmit={handleCheck}
+                className="space-y-2">
                 <label
                     htmlFor="news-query"
                     className="block text-sm font-medium dark:text-white"
@@ -144,88 +141,82 @@ function FakeNewsChecker() {
                 </Button>
             </div>
 
-            {/* ------- News and Show Verdict Below Button ------ */}
-            {verdict && (
-                <div className="space-y-3">
-                    <div >
-                        <span className="text-lg font-semibold">News :{" "}</span>
-                        <span className="text-gray-700 dark:text-gray-300">
-                            {prvsQuery}
-                        </span>
+
+            {
+                isLoading ? <PageLoader /> : <div>
+                    {/* ------- Show Verdict Below Button ------ */}
+                    {verdict && (
+                        <div className="mt-4 text-lg font-semibold">
+                            Verdict :{" "}
+                            <span className={verdict === "Partially True" || verdict === 'True' ? "text-green-400" : "text-red-400"}>
+                                {verdict}
+                            </span>
+                        </div>
+                    )}
+                    {/* ------------- Sources text ------------- */}
+                    <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+                        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                            Sources
+                        </h2>
+
+                        <Typewriter
+                            className="text-gray-700 dark:text-gray-300"
+                            options={{
+                                strings: [sources || 'Sources will appear here after checking.'],
+                                autoStart: true,
+                                delay: 35,
+                                deleteSpeed: Infinity,
+                                cursor: "",
+                            }}
+
+                        />
                     </div>
-                    <div className="text-lg font-semibold">
-                        Verdict :{" "}
-                        <span className={verdict === "Partially True" || verdict === 'True' ? "text-green-400" : "text-red-400"}>
-                            {verdict}
-                        </span>
+
+                    {/* Reasoning and Summary */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+
+                        {/* Reasoning Block */}
+                        <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+                            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                                Reasoning
+                            </h2>
+
+                            <Typewriter
+                                className="text-gray-700 dark:text-gray-300"
+                                options={{
+                                    strings: [reasoning || 'Reasoning will appear here after checking.'],
+                                    autoStart: true,
+                                    delay: 30,
+                                    deleteSpeed: Infinity,
+                                    cursor: "",
+                                }}
+
+                            />
+                        </div>
+
+                        {/* Summary Block */}
+                        <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+                            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                                Summary
+                            </h2>
+                            <Typewriter
+                                className="text-gray-700 dark:text-gray-300"
+                                options={{
+                                    strings: [summary || "Summary will appear here after checking."],
+                                    autoStart: true,
+                                    delay: 30,
+                                    deleteSpeed: Infinity,
+                                    cursor: "",
+                                }}
+
+                            />
+                        </div>
+
                     </div>
                 </div>
-            )}
-
-            {/* ------------- Sources text ------------- */}
-            <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                    Sources
-                </h2>
-
-                <Typewriter 
-                    className="text-gray-700 dark:text-gray-300"
-                    options={{
-                        strings:[sources || 'Sources will appear here after checking.'],
-                        autoStart: true,
-                        delay: 35,
-                        deleteSpeed: Infinity,
-                        cursor: "",
-                    }}
-                    
-                />
-            </div>
-
-            {/* Reasoning and Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-
-                {/* Reasoning Block */}
-                <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                        Reasoning
-                    </h2>
-
-                    <Typewriter 
-                        className="text-gray-700 dark:text-gray-300"
-                        options={{
-                            strings:[reasoning || 'Reasoning will appear here after checking.'],
-                            autoStart: true,
-                            delay: 30,
-                            deleteSpeed: Infinity,
-                            cursor: "",
-                        }}
-                        
-                    />
-                </div>
-
-                {/* Summary Block */}
-                <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                        Summary
-                    </h2>
-                    <Typewriter 
-                        className="text-gray-700 dark:text-gray-300"
-                        options={{
-                            strings:[summary || "Summary will appear here after checking."],
-                            autoStart: true,
-                            delay: 30,
-                            deleteSpeed: Infinity,
-                            cursor: "",
-                        }}
-                        
-                    />
-                </div>
-
-            </div>
+            }
 
         </div>
-        )
-        
     )
 }
 

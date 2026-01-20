@@ -37,19 +37,18 @@ Web Search Data: "{web_data}"
 
 Evaluation Criteria:
 1. Authenticity: Determine if the event in the headline is fully true, partially true, or false based on the data.
-2. Partial Truth: If some parts of the headline are accurate (e.g., event occurred but date/location is wrong), classify it as Partially True.
+2. Partial Truth: If some parts of the headline are accurate (e.g., event occurred but date is wrong), classify it as Partially True.
 3. Falsehood: If the event did not happen or cannot be confirmed at all, classify as False.
 4. Date Detection: If the event occurred, identify and include the actual date in the summary.
 5. Location Verification: Ensure the headline location aligns with the real event location from credible sources.
 6. Source Recognition: Extract and mention the names or domains of sources that validate or refute the headline..
 
 Important Guidelines:
-1. Mark the headline as Fake only if the event did not occur or is a misrepresentation of reality.
-2. Do not assume or rely on external knowledge. Use only the web search data provided.
-3. If no reliable source confirms the event, treat it as fake.
-4. Keep the Reason and Summary around 80 words each.
-5. If the headline is Valid, ensure the summary clearly includes the actual date of the event.
-6. If the verdict is False, return "null" for the Summary field.
+1. Do not assume or rely on external knowledge. Use only the web search data provided.
+2. If no reliable source confirms the event, treat it as fake.
+3. Keep the Reason and Summary around 80 words each.
+4. If the headline is Valid, ensure the summary clearly includes the actual date of the event.
+5. If the verdict is False, return "null" for the Summary field.
 
 Format of Output:
 Verdict: True / Partially True / False
