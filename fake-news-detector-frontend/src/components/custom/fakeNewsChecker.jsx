@@ -8,6 +8,44 @@ import Typewriter from "typewriter-effect"
 import axios from "axios"
 import PageLoader from "./PageLoader"
 
+function parseBackendResponse(message) {
+    const normalized = (message || "").replace(/\r\n/g, "\n").trim()
+    const labels = ["Verdict", "Reason", "Summary", "Sources"]
+    const sections = {}
+
+    for (let i = 0; i < labels.length; i++) {
+        const label = labels[i]
+        const start = normalized.indexOf(`${label}:`)
+
+        if (start === -1) {
+            sections[label] = ""
+            continue
+        }
+
+        const valueStart = start + label.length + 1
+        let end = normalized.length
+
+        for (let j = i + 1; j < labels.length; j++) {
+            const nextStart = normalized.indexOf(`\n${labels[j]}:`, valueStart)
+            if (nextStart !== -1) {
+                end = nextStart
+                break
+            }
+        }
+
+        sections[label] = normalized.slice(valueStart, end).trim()
+    }
+
+    return {
+        verdict: sections.Verdict || "Unknown",
+        reasoning: sections.Reason || "No reasoning available.",
+        summary: !sections.Summary || sections.Summary.toLowerCase() === "null"
+            ? "No summary available."
+            : sections.Summary,
+        sources: sections.Sources || "No sources available.",
+    }
+}
+
 function FakeNewsChecker() {
 
     const [query, setQuery] = useState("")
@@ -44,17 +82,7 @@ function FakeNewsChecker() {
             // const msg = "Verdict: True  \nReason: The headline states that a \"president implemented national emergency,\" which aligns with multiple verified instances where U.S. presidents have declared national emergencies, including President Trump in 2019, 2020, and 2025. However, the headline lacks specificity (e.g., which president, which emergency), making it partially true. The web data confirms such declarations occurred but does not validate an exact match to the vague headline.  \n\nSummary: U.S. presidents, including Trump, have declared national emergencies, such as the Southern Border emergency (February 15, 2019, renewed in 2020 and January 20, 2025). The headline is partially accurate but lacks details.  \n\nSources: Tavily (referencing National Emergencies Act, 1976; Trump's 2019, 2020, and 2025 declarations)."
             // const msg= "Verdict: False  \nReason: The headline \"i am spiderman\" does not refer to a real-world event or verifiable claim. The web search data only discusses fictional and metaphorical references to Spider-Man from media (e.g., movies, music, comic lore) and does not provide evidence of an actual occurrence. No credible sources confirm a factual basis for the headline.  \n\nSummary: null  \nSources: Columbia Records (music), Marvel Comics-related content  \n\nNote: The search results pertain to entertainment contexts rather than real-world events, reinforcing the lack of authenticity."       
 
-            const verdictMatch = msg.match(/Verdict:\s*(.+?)\s{2,}/);
-            const reasonMatch = msg.match(/Reason:\s*([\s\S]*?)\n\s*\n/);
-            const summaryMatch = msg.match(/Summary:\s*(.+?)\s{2,}/);
-            const sourcesMatch = msg.match(/Sources:\s*([\s\S]*?)$/m);
-
-            const verdict = verdictMatch?.[1]?.trim() || "Unknown";
-            const reasoning = reasonMatch?.[1]?.trim() || "No reasoning available.";
-            const sources = sourcesMatch?.[1]?.trim() || "No sources available.";
-
-            let summaryRaw = summaryMatch?.[1]?.trim() || "";
-            const summary = summaryRaw.toLowerCase() === "null" || summaryRaw == "" ? "No summary available" : summaryRaw;
+            const { verdict, reasoning, summary, sources } = parseBackendResponse(msg);
 
             console.log({ verdict, reasoning, summary, sources });
 
@@ -65,6 +93,7 @@ function FakeNewsChecker() {
 
         } catch (err) {
             console.error("Error checking headline:", err);
+            setIsLoading(false);
             setVerdict("Error");
             setReasoning("Failed to fetch response from server.");
             setSummary("Please try again later.");
