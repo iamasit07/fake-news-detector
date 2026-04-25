@@ -1,14 +1,18 @@
-from uagents import Context, Model
+import asyncio
+import os
 from typing import List
+
+import requests
+from dotenv import load_dotenv
+from uagents import Context, Model
+
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 class NewsRequest(Model):
     query: str
 
 class NewsResult(Model):
     response: str
-
-class WebSearchRequest(Model):
-    query: str
 
 class WebSearchResult(Model):
     title: str
@@ -25,9 +29,8 @@ class ASI1miniRequest(Model):
 class ASI1miniResponse(Model):
     response: str
 
-# Agent addresses
-TAVILY_ADDRESS = 'agent1qt5uffgp0l3h9mqed8zh8vy5vs374jl2f8y0mjjvqm44axqseejqzmzx9v8'
 ASI_1_MIN_ADDRESS = 'agent1qvn0t4u5jeyewp9l544mykv639szuhq8dhmatrgfuwqphx20n8jn78m9paa'
+TAVILY_API_URL = "https://api.tavily.com/search"
 
 PROMPT_STRING = """
 Analyze the following news headline and the accompanying web search data to determine whether the event actually occurred or is fabricated, regardless of when it happened.
@@ -65,15 +68,11 @@ async def verify_news(ctx: Context, query: str) -> str:
     try:
         # Step 1: Search for information using Tavily
         ctx.logger.info(f"Searching for information about: {query}")
-        
-        search_reply, search_status = await ctx.send_and_receive(
-            TAVILY_ADDRESS, 
-            WebSearchRequest(query=query),
-            response_type=WebSearchResponse
-        )
-        
+
+        search_reply = await search_tavily(query)
+
         if not isinstance(search_reply, WebSearchResponse):
-            ctx.logger.error(f"Failed to receive search response: {search_status}")
+            ctx.logger.error("Failed to build Tavily search response")
             return "Error: Unable to search for information. Please try again later."
         
         # Step 2: Process search results
@@ -109,3 +108,38 @@ async def verify_news(ctx: Context, query: str) -> str:
     except Exception as e:
         ctx.logger.error(f"Error during news verification: {str(e)}")
         return f"Error during news verification: {str(e)}"
+
+
+async def search_tavily(query: str) -> WebSearchResponse:
+    api_key = os.getenv("TAVILY_API_KEY")
+    if not api_key:
+        raise ValueError("TAVILY_API_KEY is not set")
+
+    payload = {
+        "api_key": api_key,
+        "query": query,
+        "search_depth": "advanced",
+        "max_results": 5,
+        "include_answer": False,
+        "include_raw_content": False,
+    }
+
+    response = await asyncio.to_thread(
+        requests.post,
+        TAVILY_API_URL,
+        json=payload,
+        timeout=30,
+    )
+    response.raise_for_status()
+
+    body = response.json()
+    results = [
+        WebSearchResult(
+            title=item.get("title", ""),
+            url=item.get("url", ""),
+            content=item.get("content", ""),
+        )
+        for item in body.get("results", [])
+    ]
+
+    return WebSearchResponse(query=query, results=results)
