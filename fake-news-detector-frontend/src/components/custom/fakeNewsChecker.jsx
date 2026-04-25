@@ -9,6 +9,44 @@ import axios from "axios"
 import PageLoader from "./PageLoader"
 import { set } from "date-fns"
 
+function parseBackendResponse(message) {
+    const normalized = (message || "").replace(/\r\n/g, "\n").trim()
+    const labels = ["Verdict", "Reason", "Summary", "Sources"]
+    const sections = {}
+
+    for (let i = 0; i < labels.length; i++) {
+        const label = labels[i]
+        const start = normalized.indexOf(`${label}:`)
+
+        if (start === -1) {
+            sections[label] = ""
+            continue
+        }
+
+        const valueStart = start + label.length + 1
+        let end = normalized.length
+
+        for (let j = i + 1; j < labels.length; j++) {
+            const nextStart = normalized.indexOf(`\n${labels[j]}:`, valueStart)
+            if (nextStart !== -1) {
+                end = nextStart
+                break
+            }
+        }
+
+        sections[label] = normalized.slice(valueStart, end).trim()
+    }
+
+    return {
+        verdict: sections.Verdict || "Unknown",
+        reasoning: sections.Reason || "No reasoning available.",
+        summary: !sections.Summary || sections.Summary.toLowerCase() === "null"
+            ? "No summary available."
+            : sections.Summary,
+        sources: sections.Sources || "No sources available.",
+    }
+}
+
 function FakeNewsChecker() {
 
     const [query, setQuery] = useState("")
@@ -68,6 +106,7 @@ function FakeNewsChecker() {
 
         } catch (err) {
             console.error("Error checking headline:", err);
+            setIsLoading(false);
             setVerdict("Error");
             setReasoning("Failed to fetch response from server.");
             setSummary("Please try again later.");
