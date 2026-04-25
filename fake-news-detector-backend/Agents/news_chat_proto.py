@@ -18,6 +18,7 @@ from news_verification import NewsRequest
 
 # Replace the AI Agent Address with anyone of the following LLMs as they support StructuredOutput required for the processing of this agent.
 AI_AGENT_ADDRESS = 'agent1q0h70caed8ax769shpemapzkyk65uscw4xwk6dc4t3emvp5jdcvqs9xs32y'
+ANALYSIS_AGENT_ADDRESS = 'agent1qdhaqxdvjhtchfmra6ycwjt7p3dj7ucq2ccnx2ppk4pa5mde4kc0ghep43j'
 
 if not AI_AGENT_ADDRESS:
     raise ValueError("AI_AGENT_ADDRESS not set")
@@ -51,6 +52,18 @@ class StructuredOutputResponse(Model):
 
 @chat_proto.on_message(ChatMessage)
 async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
+    if sender == ANALYSIS_AGENT_ADDRESS:
+        response_text = "\n".join(
+            item.text for item in msg.content if isinstance(item, TextContent)
+        ).strip()
+        if response_text:
+            ctx.storage.set(f"ai_analysis_response:{ctx.session}", response_text)
+        await ctx.send(
+            sender,
+            ChatAcknowledgement(timestamp=datetime.utcnow(), acknowledged_msg_id=msg.msg_id),
+        )
+        return
+
     # Safely log the first content item
     first_item = msg.content[0] if msg.content else None
     if isinstance(first_item, TextContent):

@@ -8,7 +8,12 @@ from uagents.setup import fund_agent_if_low
 from news_chat_proto import chat_proto, struct_output_client_proto
 from news_verification import verify_news, NewsRequest, NewsResult
 
-agent = Agent(name="Central Agent", seed="Central Agent", port=8009, mailbox=True)
+agent = Agent(
+    name="Central Agent",
+    seed="Central Agent",
+    port=int(os.getenv("PORT", "8009")),
+    mailbox=True,
+)
 
 fund_agent_if_low(agent.wallet.address()) #type:ignore
 
