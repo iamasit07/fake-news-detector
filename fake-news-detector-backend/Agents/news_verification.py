@@ -1,10 +1,20 @@
 import asyncio
 import os
+from datetime import datetime
 from typing import List
+from uuid import uuid4
 
 import requests
 from dotenv import load_dotenv
-from uagents import Context, Model
+from uagents import Context, Model, Protocol
+from uagents_core.contrib.protocols.chat import (
+    ChatMessage,
+    EndSessionContent,
+    StartSessionContent,
+    TextContent,
+    chat_protocol_spec,
+)
+from uagents_core.types import DeliveryStatus
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
@@ -29,8 +39,9 @@ class ASI1miniRequest(Model):
 class ASI1miniResponse(Model):
     response: str
 
-ASI_1_MIN_ADDRESS = 'agent1qvn0t4u5jeyewp9l544mykv639szuhq8dhmatrgfuwqphx20n8jn78m9paa'
+ASI_1_MIN_ADDRESS = 'agent1qdhaqxdvjhtchfmra6ycwjt7p3dj7ucq2ccnx2ppk4pa5mde4kc0ghep43j'
 TAVILY_API_URL = "https://api.tavily.com/search"
+CHAT_PROTOCOL_DIGEST = Protocol(spec=chat_protocol_spec).digest
 
 PROMPT_STRING = """
 Analyze the following news headline and the accompanying web search data to determine whether the event actually occurred or is fabricated, regardless of when it happened.
@@ -92,18 +103,26 @@ async def verify_news(ctx: Context, query: str) -> str:
         # Step 4: Get AI analysis
         ctx.logger.info("Sending data to AI for verification analysis")
         
-        ai_reply, ai_status = await ctx.send_and_receive(
-            ASI_1_MIN_ADDRESS,
-            ASI1miniRequest(query=final_prompt),
-            response_type=ASI1miniResponse
+        ai_message = create_chat_prompt(final_prompt)
+        ai_status = await ctx.send_raw(
+            destination=ASI_1_MIN_ADDRESS,
+            message_schema_digest=Model.build_schema_digest(ai_message),
+            message_body=ai_message.model_dump_json(),
+            timeout=60,
+            protocol_digest=CHAT_PROTOCOL_DIGEST,
         )
-        
-        if not isinstance(ai_reply, ASI1miniResponse):
+
+        if ai_status.status != DeliveryStatus.DELIVERED:
             ctx.logger.error(f"Failed to receive AI response: {ai_status}")
+            return "Error: Unable to analyze the information. Please try again later."
+
+        ai_reply = await wait_for_ai_chat_response(ctx, timeout=60)
+        if ai_reply is None:
+            ctx.logger.error("Timed out waiting for AI chat response")
             return "Error: Unable to analyze the information. Please try again later."
         
         ctx.logger.info(f"Verification completed for: {query}")
-        return ai_reply.response
+        return ai_reply
         
     except Exception as e:
         ctx.logger.error(f"Error during news verification: {str(e)}")
@@ -143,3 +162,29 @@ async def search_tavily(query: str) -> WebSearchResponse:
     ]
 
     return WebSearchResponse(query=query, results=results)
+
+
+def create_chat_prompt(text: str) -> ChatMessage:
+    return ChatMessage(
+        timestamp=datetime.utcnow(),
+        msg_id=uuid4(),
+        content=[
+            StartSessionContent(type="start-session"),
+            TextContent(type="text", text=text),
+            EndSessionContent(type="end-session"),
+        ],
+    )
+
+
+async def wait_for_ai_chat_response(ctx: Context, timeout: int) -> str | None:
+    response_key = f"ai_analysis_response:{ctx.session}"
+
+    try:
+        for _ in range(timeout):
+            response = ctx.storage.get(response_key)
+            if response:
+                return response
+            await asyncio.sleep(1)
+        return None
+    finally:
+        ctx.storage.remove(response_key)
