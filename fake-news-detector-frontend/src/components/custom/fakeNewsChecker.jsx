@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input.jsx"
 import { Button } from "@/components/ui/button.jsx"
 import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import { Sun, Moon } from "lucide-react"
 import { useState } from "react"
 import Typewriter from "typewriter-effect"
@@ -11,35 +10,31 @@ import { set } from "date-fns"
 
 function parseBackendResponse(message) {
     const normalized = (message || "").replace(/\r\n/g, "\n").trim()
-    const labels = ["Verdict", "Reason", "Summary", "Sources"]
-    const sections = {}
+    const sections = {
+        Verdict: "",
+        Reason: "",
+        Summary: "",
+        Sources: "",
+    }
+    const sectionPattern = /(?:^|\n)\s*\**(Verdict|Reason(?:ing)?|Summary|Sources)\**\s*[:\-]\s*([\s\S]*?)(?=(?:\n\s*\**(?:Verdict|Reason(?:ing)?|Summary|Sources)\**\s*[:\-])|$)/gi
 
-    for (let i = 0; i < labels.length; i++) {
-        const label = labels[i]
-        const start = normalized.indexOf(`${label}:`)
+    for (const match of normalized.matchAll(sectionPattern)) {
+        const rawLabel = match[1]
+        const value = match[2]?.trim() || ""
+        const normalizedLabel = rawLabel.toLowerCase().startsWith("reason")
+            ? "Reason"
+            : rawLabel.charAt(0).toUpperCase() + rawLabel.slice(1).toLowerCase()
 
-        if (start === -1) {
-            sections[label] = ""
-            continue
-        }
-
-        const valueStart = start + label.length + 1
-        let end = normalized.length
-
-        for (let j = i + 1; j < labels.length; j++) {
-            const nextStart = normalized.indexOf(`\n${labels[j]}:`, valueStart)
-            if (nextStart !== -1) {
-                end = nextStart
-                break
-            }
-        }
-
-        sections[label] = normalized.slice(valueStart, end).trim()
+        sections[normalizedLabel] = value
     }
 
+    const fallbackReason = normalized && Object.values(sections).every((value) => !value)
+        ? normalized
+        : "No reasoning available."
+
     return {
-        verdict: sections.Verdict || "Unknown",
-        reasoning: sections.Reason || "No reasoning available.",
+        verdict: sections.Verdict || (normalized.toLowerCase().startsWith("error") ? "Error" : "Unknown"),
+        reasoning: sections.Reason || fallbackReason,
         summary: !sections.Summary || sections.Summary.toLowerCase() === "null"
             ? "No summary available."
             : sections.Summary,
@@ -199,6 +194,7 @@ function FakeNewsChecker() {
                         </h2>
 
                         <Typewriter
+                            key={sources}
                             className="text-gray-700 dark:text-gray-300"
                             options={{
                                 strings: [sources || 'Sources will appear here after checking.'],
@@ -221,6 +217,7 @@ function FakeNewsChecker() {
                             </h2>
 
                             <Typewriter
+                                key={reasoning}
                                 className="text-gray-700 dark:text-gray-300"
                                 options={{
                                     strings: [reasoning || 'Reasoning will appear here after checking.'],
@@ -239,6 +236,7 @@ function FakeNewsChecker() {
                                 Summary
                             </h2>
                             <Typewriter
+                                key={summary}
                                 className="text-gray-700 dark:text-gray-300"
                                 options={{
                                     strings: [summary || "Summary will appear here after checking."],

@@ -1,5 +1,31 @@
 .venv
 .vscode
+.env
 __pycache__
 node_modules
 myenv/
+dist
+*.log
+*.out
+*.err
+*.pid
+*.tmp
+*.temp
+~$*.docx
+*.swp
+
+# Python caches and local envs
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+*.pyo
+*.pyd
+
+# Backend local runtime files
+fake-news-detector-backend/Agents/*.log
+fake-news-detector-backend/Agents/*_data.json
+fake-news-detector-backend/Agents/.env
+
+# Frontend local build output
+fake-news-detector-frontend/dist/
